@@ -1,9 +1,13 @@
 using Business.Abstract;
 using Business.Constants;
+using Business.Constants.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 
 namespace Business.Concrete;
 
@@ -11,17 +15,14 @@ public class ProductManager:IProductService
 {
     private IProductDal _productDal;
     private ICategoryService _categoryService;
-        
-    public ProductManager(IProductDal productDal)
+    
+    public ProductManager(IProductDal productDal,ICategoryService categoryService)
     {
         _productDal = productDal;
-            
-    }
-    public ProductManager(ICategoryService categoryService)
-    {
         _categoryService = categoryService;
     }
-
+        
+    [ValidationAspect((typeof(ProductValidator)))] //Burada validate kısmını yazdık
     public IResult Add(Product product)
     {
         _productDal.Add(product);
